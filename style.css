@@ -1,0 +1,33 @@
+table {
+  border-collapse: collapse;
+  border: 2px solid rgb(0 0 0);
+  font-family: sans-serif;
+  width: 100%;
+  font-size: 200%;
+}
+
+thead {
+  background-color: rgb(200 200 200);
+}
+
+th,
+td {
+  border: 1px solid rgb(0 0 0);
+  text-align: center;
+}
+
+input[type="time"]
+{
+  font-size: 100%;
+}
+
+input[type="checkbox"]
+{
+  width: 80px;
+  height: 40px;
+}
+
+input[type="date"]
+{
+  font-size: 100%;
+}

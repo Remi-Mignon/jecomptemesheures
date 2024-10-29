@@ -1,0 +1,40 @@
+
+
+<!doctype html>
+<html lang="fr">
+	<head>
+		<meta charset="utf-8" />
+		<title>Je compte mes heures</title>
+		<link href="style.css" type="text/css" rel="stylesheet" />
+		<script src="script.js"></script>
+	</head>
+	<body onload="init();">
+
+		<div id="initDiv">
+			<span>Définicez la date du premier jour de la 1er 15ene</span>
+			<input type="date" id="datejour1" value="2024-10-21"/>
+			<button onclick="initTab()">Valider la date</button>
+			<button onclick="exportTab()">Calculer les heure</button>
+		</div>
+
+		<table id="daysTab" hidden>
+		  <thead>
+		    <tr>
+		      <th>Jour</th>
+		      <th>Date</th>
+		      <th>Prise de service</th>
+		      <th>Début de pause</th>
+		      <th>Fin de pause</th>
+		      <th>Fin de service</th>
+		      <th>Repas exterieur</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		    <tr>
+		    </tr>
+		  </tbody>
+		  <tfoot>
+		  </tfoot>
+		</table>
+	</body>
+</html>
