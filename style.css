@@ -1,19 +1,24 @@
-table {
-  border-collapse: collapse;
-  border: 2px solid rgb(0 0 0);
+html{
   font-family: sans-serif;
-  width: 100%;
-  font-size: 200%;
 }
 
-thead {
+table{
+  border-collapse: collapse;
+  border: 2px solid rgb(0 0 0);
+  /*width: 100%;*/
+  font-size: 200%;
+  white-space:nowrap;
+}
+
+thead{
   background-color: rgb(200 200 200);
 }
 
 th,
-td {
+td{
   border: 1px solid rgb(0 0 0);
   text-align: center;
+  padding: 10px 20px ;
 }
 
 input[type="time"]

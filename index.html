@@ -8,15 +8,15 @@
 		<link href="style.css" type="text/css" rel="stylesheet" />
 		<script src="script.js"></script>
 	</head>
-	<body onload="init();">
+	<body onload="init();" id="body">
 
 		<div id="initDiv">
 			<span>Définicez la date du premier jour de la 1er 15ene</span>
-			<input type="date" id="datejour1" value="2024-10-21"/>
+			<input type="date" id="datejour1" value="2024-08-12"/>
 			<button onclick="initTab()">Valider la date</button>
 			<button onclick="exportTab()">Calculer les heure</button>
 		</div>
-
+		<br>
 		<table id="daysTab" hidden>
 		  <thead>
 		    <tr>
@@ -33,8 +33,25 @@
 		    <tr>
 		    </tr>
 		  </tbody>
-		  <tfoot>
-		  </tfoot>
 		</table>
+		<br>
+		<table id="confirmationTab" hidden>
+		  <thead>
+		  </thead>
+		  <tbody>
+		    <tr>
+		    </tr>
+		  </tbody>
+		</table>
+		<br>
+		<table id="semaines" hidden>
+		</table>
+		<br>
+		<table id="ene15" hidden>
+		</table>
+		<br>
+		<table id="mois" hidden>
+		</table>
+		<button onclick="calcDiff()">Calculer la différance</button>
 	</body>
 </html>
