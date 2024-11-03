@@ -36,3 +36,12 @@ input[type="date"]
 {
   font-size: 100%;
 }
+
+input[type="number"]
+{
+  font-size: 100%;
+}
+
+button {
+  font-size: 100%;
+}

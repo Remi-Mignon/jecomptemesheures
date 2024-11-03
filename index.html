@@ -10,11 +10,10 @@
 	</head>
 	<body onload="init();" id="body">
 
-		<div id="initDiv">
+		<div style="font-size: 200%;" id="initDiv">
 			<span>Définicez la date du premier jour de la 1er 15ene</span>
-			<input type="date" id="datejour1" value="2024-08-12"/>
+			<input type="date" id="datejour1" value=""/>
 			<button onclick="initTab()">Valider la date</button>
-			<button onclick="exportTab()">Calculer les heure</button>
 		</div>
 		<br>
 		<table id="daysTab" hidden>
@@ -43,6 +42,7 @@
 		    </tr>
 		  </tbody>
 		</table>
+		<button id="extButt" onclick="exportTab()" hidden>Calculer les heure</button>
 		<br>
 		<table id="semaines" hidden>
 		</table>
@@ -52,6 +52,6 @@
 		<br>
 		<table id="mois" hidden>
 		</table>
-		<button onclick="calcDiff()">Calculer la différance</button>
+		<button id="calcButt" onclick="calcDiff()" hidden>Calculer la différance</button>
 	</body>
 </html>

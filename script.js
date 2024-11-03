@@ -5,6 +5,7 @@
 
 const amplitudeJournaliereMax = 12
 const debutDePauseMax = 14
+const debutDePauseMin = 11
 const repasDuSoirMin = 18
 const repasDuSoirMax = 21
 const tempsDePauseDecimalMin = 0.5
@@ -17,6 +18,7 @@ const prime = 0
 var isTabInit = false
 var isTab2Init = false
 var isTab3Init = false
+var isDiffCalc = false
 
 var mois = new Array()
 
@@ -82,6 +84,7 @@ function initTab() {
 			cell7.innerHTML = "<input type='checkbox'/>";
 		}
 		document.getElementById("daysTab").hidden = false;
+		document.getElementById("extButt").hidden = false;
 		isTabInit = true
 	} else {
 		modifTab(firstDate, table)
@@ -119,28 +122,28 @@ function initTab2(data) {
 	const header = table.firstChild.nextSibling.firstChild.nextSibling
 	const myElement = table.firstChild.nextSibling.nextSibling.nextSibling;
 
-	for (var i = 0; i <= data.length-1; i++) {
+	for (var i = 0; i <= data.length-2; i++) {
 
 		var obj = data[i];
 		var j=-1
 		for (var key in obj){
 			j++
 			var value = obj[key];
-			if(i==0 && j>6 && !isTab2Init) {
+			if(i==0 && j>6 && !isTab2Init) { //pas j>6 mais key!=Jour,Date, prise de service, ... TO DO
 				header.appendChild(document.createElement("th")).textContent = key //add cell in header
 			}
 			var row = -1
 			for (const child of myElement.children) {
 				row++
-				if(row==i && j>6) {
+				if(row==i && j>6) { //pas j>6 mais key!=Jour,Date, prise de service, ... TO DO 
 					if(!isTab2Init) {
-						child.appendChild(document.createElement("td")).innerHTML = "<span>"+value+"</span>" //add cell in tab rows
+						child.appendChild(document.createElement("td")).innerHTML = "<span>"+Math.round(value*100)/100+"</span>" //add cell in tab rows
 					} else {
 						var cell = -1
 						for (const son of child.children) {
 							cell++
-							if(row==0 && cell>6) {
-								son.innerHTML = "<span>"+value+"</span>"
+							if(cell==j) {
+								son.innerHTML = "<span>"+Math.round(value*100)/100+"</span>"
 							}
 						}
 					}
@@ -149,37 +152,6 @@ function initTab2(data) {
 		}
 	}
 	isTab2Init = true
-}
-
-function initTab2Null(data) {
-
-	var table = document.getElementById("confirmationTab");
-	var header = table.createTHead();
-	var hrow = header.insertRow(0);  
-
-	for (var i = 0; i <= data.length-1; i++) {
-
-		var row = table.insertRow(i+1);
-		if (data[i]['Jour']=="Dimanche" || data[i]['Jour']=="Samedi" ) {
-			row.style.backgroundColor = 'rgb(220 220 220)';
-		}
-
-		  var obj = data[i];
-		  var j=-1
-		  for (var key in obj){
-		  	j++
-		    var value = obj[key];
-		    if(i==0) {
-				hrow.insertCell(j).innerHTML = (j+1)+" "+key;
-		    }
-		    row.insertCell(j).innerHTML = "<span type="+key+">"+value+"</span>";
-		    //console.log(key, value)
-		  }
-
-	}
-	//document.getElementById("daysTab").hidden = true;
-	document.getElementById("confirmationTab").hidden = false;
-	//document.getElementById("initDiv").hidden = true;
 }
 
 function initTabSemaine(semaine1,semaine2,semaine3,semaine4) {
@@ -198,7 +170,7 @@ function initTabSemaine(semaine1,semaine2,semaine3,semaine4) {
 		j++
 		var value = obj[key];
 		hrow.insertCell(j).outerHTML  = "<th>"+key+"</th>";
-		row.insertCell(j).innerHTML = "<span>"+value+"</span>";
+		row.insertCell(j).innerHTML = "<span>"+Math.round(value*100)/100+"</span>";
 	}
 
 	row = tBody.insertRow(-1);
@@ -207,7 +179,7 @@ function initTabSemaine(semaine1,semaine2,semaine3,semaine4) {
 	for (var key in obj){
 		j++
 		var value = obj[key];
-		row.insertCell(j).innerHTML = "<span>"+value+"</span>";
+		row.insertCell(j).innerHTML = "<span>"+Math.round(value*100)/100+"</span>";
 	}
 
 	row = tBody.insertRow(-1);
@@ -216,7 +188,7 @@ function initTabSemaine(semaine1,semaine2,semaine3,semaine4) {
 	for (var key in obj){
 		j++
 		var value = obj[key];
-		row.insertCell(j).innerHTML = "<span>"+value+"</span>";
+		row.insertCell(j).innerHTML = "<span>"+Math.round(value*100)/100+"</span>";
 	}
 
 	row = tBody.insertRow(-1);
@@ -225,7 +197,7 @@ function initTabSemaine(semaine1,semaine2,semaine3,semaine4) {
 	for (var key in obj){
 		j++
 		var value = obj[key];
-		row.insertCell(j).innerHTML = "<span>"+value+"</span>";
+		row.insertCell(j).innerHTML = "<span>"+Math.round(value*100)/100+"</span>";
 	}
 
 	table.hidden = false;
@@ -246,7 +218,7 @@ function initTab15ene(premiere15ene,deusieme15ene) {
 		j++
 		var value = obj[key];
 		hrow.insertCell(j).outerHTML  = "<th>"+key+"</th>";
-		row.insertCell(j).innerHTML = "<span>"+value+"</span>";
+		row.insertCell(j).innerHTML = "<span>"+Math.round(value*100)/100+"</span>";
 	}
 
 	row = tBody.insertRow(-1);
@@ -255,7 +227,7 @@ function initTab15ene(premiere15ene,deusieme15ene) {
 	for (var key in obj){
 		j++
 		var value = obj[key];
-		row.insertCell(j).innerHTML = "<span>"+value+"</span>";
+		row.insertCell(j).innerHTML = "<span>"+Math.round(value*100)/100+"</span>";
 	}
 
 	table.hidden = false;
@@ -281,12 +253,13 @@ function initTabMois(mois) {
 			var row = tBody.insertRow(j);
 			var value = obj[key];
 			row.insertCell(-1).innerHTML = key;
-			row.insertCell(-1).innerHTML = "<span>"+value+"</span>";
+			row.insertCell(-1).innerHTML = "<span>"+Math.round(value*100)/100+"</span>";
 			row.insertCell(-1).innerHTML = "<input type='number' value=''/>";
 			row.insertCell(-1).innerHTML = "<span></span>";
 		}
 
 		table.hidden = false;
+		document.getElementById("calcButt").hidden = false;
 		isTab3Init = true
 
 	} else {
@@ -306,7 +279,7 @@ function initTabMois(mois) {
 				for (const son of child.children) {
 					cell++
 					if(row==j && cell==1) {
-						son.innerHTML = "<span>"+value+"</span>"
+						son.innerHTML = "<span>"+Math.round(value*100)/100+"</span>"
 					}
 				}
 			}
@@ -321,7 +294,7 @@ function initTabMois(mois) {
 async function exportTab() {
 
 	var table = document.getElementById("daysTab");
-	var data = parseTable(table);
+	var data = parseTable(table); // faire le parse moi meme TO DO
 	data = await calcTab(data)
 
 
@@ -351,10 +324,12 @@ async function exportTab() {
 
 
 	initTab2(data)
-	//initTab2Null(data)
 	initTabSemaine(semaine1,semaine2,semaine3,semaine4)
 	initTab15ene(premiere15ene,deusieme15ene)
 	initTabMois(mois)
+	if (isDiffCalc) {
+		calcDiff()
+	}
 }
 
 function arrayify(collection) {
@@ -366,7 +341,9 @@ function factory(headings) {
 	return arrayify(row.cells).reduce(function(prev, curr, i) {
 
 		if (curr.firstChild.nodeName == 'SPAN') {
-			prev[headings[i]] = curr.innerText;
+			if(headings[i]!="Ext"){
+				prev[headings[i]] = curr.innerText;
+			}
 		}else {
 				switch (curr.firstChild.type) {
 				case 'span':
@@ -386,7 +363,6 @@ function factory(headings) {
 			}
 		}
 		
-		//prev[headings[i]] = curr.firstChild.value;
 		return prev;
 	}, {});
 	}
@@ -482,12 +458,7 @@ async function calcTab(data) {
 		data[i]['Temps de pause en minute'] = data[i]['Temps de pause en decimal']*60
 		data[i]['Temps de travail en heure'] = (data[i]['Temps de travail en decimal']-(data[i]['Temps de travail en decimal']%1))+(60*(data[i]['Temps de travail en decimal']%1)/100)
 
-		data[i]['Repas du soir'] = false
-		if(data[i]['Prise de service en decimal']<=repasDuSoirMin && data[i]['Fin de service en decimal']>=repasDuSoirMax){
-			data[i]['Repas du soir'] = true
-		}
-
-		if(data[i]['Début de pause en decimal']>debutDePauseMax){
+		if(data[i]['Début de pause en decimal']>debutDePauseMax || (data[i]['Début de pause en decimal']<debutDePauseMin && data[i]['Début de pause en decimal']!=0)){
 			data[i]['Ext'] = true
 		}
 
@@ -496,16 +467,16 @@ async function calcTab(data) {
 			data[i]['Repas de 30min'] = true
 		} else if(data[i]['Temps de pause en decimal']<tempsDePauseDecimalMin && data[i]['Temps de pause en decimal']>0 && data[i]['Ext'] == false){
 			data[i]['Ext'] = true
-			data[i]['Temps de travail en decimal'] = data[i]['Temps de travail en decimal']+0.25
+			//data[i]['Temps de travail en decimal'] = data[i]['Temps de travail en decimal']+0.25
 		}
 
 		data[i]['IDAJ'] = 0
-		if(data[i]['Temps de travail en decimal']>amplitudeJournaliereMax){
-			data[i]['IDAJ'] = data[i]['Temps de travail en decimal']-amplitudeJournaliereMax
+		if(data[i]['Amplitude en decimal']>amplitudeJournaliereMax){
+			data[i]['IDAJ'] = data[i]['Amplitude en decimal']-amplitudeJournaliereMax
 		}
 
 		data[i]['Nuit'] = false
-		if(data[i]['Prise de service en decimal']>17 && data[i]['Fin de service en decimal']>=28) {
+		if((data[i]['Prise de service en decimal']>17 && data[i]['Fin de service en decimal']>=28) || data[i]['Prise de service en decimal']==0) {
 			data[i]['Nuit'] = true
 		}
 
@@ -538,20 +509,28 @@ async function calcTab(data) {
 		{
 			data[i]['Nuit / Week end / Ferie'] = true
 		}
+
+		data[i]['Repas du soir'] = false
+		if(data[i]['Prise de service en decimal']<=repasDuSoirMin && data[i]['Fin de service en decimal']>=repasDuSoirMax && !data[i]['Nuit / Week end / Ferie']){
+			data[i]['Repas du soir'] = true
+		}
+
 		if(data[i]['Nuit'] == true)
 		{
 			data[i]['Nuit / Week end / Ferie'] = true
 		}
 
 		data[i]['Temps de travail effectif en decimal'] = data[i]['Temps de travail en decimal']
+		if(data[i]['Nuit']==true && i==data.length-2 && (data[i]['Prise de service en decimal']!=0 || data[i]['Fin de service en decimal']!=0) )
+		{
+			data[i]['Temps de travail effectif en decimal'] =  24 - data[i]['Prise de service en decimal'] - data[i]['Temps de pause en decimal']
+		}
 		if(data[i]['Nuit / Week end / Ferie'] == true)
 		{
-			data[i]['Temps de travail effectif en decimal'] = (data[i]['Temps de travail en decimal']*coeffDeLArnaque)
+			data[i]['Temps de travail effectif en decimal'] = (data[i]['Temps de travail effectif en decimal']*coeffDeLArnaque)
 		}
-
 	}
 
-	//printDataTab(data)
 	return data
 }
 
@@ -642,9 +621,28 @@ function calcDiff(){
 			for (const son of child.children) {
 				cell++
 				if(row==j && cell==1) {
-					son.innerHTML = "<span>"+value+"</span>"
+
+					var result = 0.0
+					if(son.nextSibling.firstChild.value==""){
+						result = 0
+					} else {
+						result = parseFloat(son.nextSibling.firstChild.value)-parseFloat(value)
+					}
+					console.log(result)
+					if(result<0.01 && result>-0.01){
+						son.nextSibling.nextSibling.innerHTML = "<span>"+Math.round(result*100)/100+"</span>"
+					} else if(result>=0.01) {
+						son.nextSibling.nextSibling.innerHTML = "<span style=\"background-color:lime;\">"+Math.round(result*100)/100+"</span>"
+					} else if(result<=-0.01) {
+						son.nextSibling.nextSibling.innerHTML = "<span style=\"background-color:red;\">"+Math.round(result*100)/100+"</span>"
+					}
 				}
 			}
 		}
 	}
+	isDiffCalc = true
+}
+
+window.onbeforeunload = function() {
+        return "Dude, are you sure you want to refresh? Think of the kittens!";
 }
