@@ -7,9 +7,10 @@ const amplitudeJournaliereMax = 12
 const debutDePauseMax = 14
 const debutDePauseMin = 11
 const repasDuSoirMin = 18
-const repasDuSoirMax = 21
+const repasDuSoirMax = 22
 const tempsDePauseDecimalMin = 0.5
 const coeffDeLArnaque = 0.8
+const coeffDeLArnaquePoste01012025 = 1
 const heuresSupPar15eneMax = 16
 const heureMensuelle = 152
 const joursDeCongesAcquis = 2.5
@@ -21,6 +22,8 @@ var isTab3Init = false
 var isDiffCalc = false
 
 var mois = new Array()
+
+var nb15ene = 2
 
 function init() {
 
@@ -48,46 +51,60 @@ function dateToString(date) {
 //--------------------------------------------------------------------------
 // Array vers HTML
 //--------------------------------------------------------------------------
+function initNb15ene() {
+
+	nb15ene = parseInt(document.getElementById("nb15ene").value)
+	document.getElementById('nb15ene').disabled = true;
+	document.getElementById('nb15eneBtn').disabled = true;
+	document.getElementById("initDiv").hidden = false;
+}
+
 function initTab() {
+	if(document.getElementById("datejour1").value!=="")
+	{
+		var firstDate = new Date(document.getElementById("datejour1").value)
+		var table = document.getElementById("daysTab");
 
-	var firstDate = new Date(document.getElementById("datejour1").value)
-	var table = document.getElementById("daysTab");
+		if (!isTabInit) {
+			for (var i = 0; i <= (7*2*nb15ene)-1; i++) {
 
-	if (!isTabInit) {
-		for (var i = 0; i <= (7*4)-1; i++) {
+				var date = new Date(firstDate)
+				date.setDate(date.getDate()+i)
+				var dateDay = date.getDay()
+				var dayName = getDayName(dateDay)
+				var dateString = dateToString(date)
 
-			var date = new Date(firstDate)
-			date.setDate(date.getDate()+i)
-			var dateDay = date.getDay()
-			var dayName = getDayName(dateDay)
-			var dateString = dateToString(date)
+				var row = table.insertRow(i+1);
+				if (dateDay==0 || dateDay==6 ) {
+					row.style.backgroundColor = 'rgb(220 220 220)';
+				}
 
-			var row = table.insertRow(i+1);
-			if (dateDay==0 || dateDay==6 ) {
-				row.style.backgroundColor = 'rgb(220 220 220)';
+				var cell1 = row.insertCell(0);
+				var cell2 = row.insertCell(1);
+				var cell3 = row.insertCell(2);
+				var cell4 = row.insertCell(3);
+				var cell5 = row.insertCell(4);
+				var cell6 = row.insertCell(5);
+				var cell7 = row.insertCell(6);
+				var cell8 = row.insertCell(7);
+
+				cell1.innerHTML = "<span>"+dayName+"</span>";
+				cell2.innerHTML = "<input type='date' value='"+dateString+"' disabled/>";
+				cell3.innerHTML = "<input type='time' value=''/>";
+				cell4.innerHTML = "<input type='time' value=''/>";
+				cell5.innerHTML = "<input type='time' value=''/>";
+				cell6.innerHTML = "<input type='time' value=''/>";
+				cell7.innerHTML = "<input type='time' value=''/>";
+				cell8.innerHTML = "<input type='checkbox'/>";
 			}
-
-			var cell1 = row.insertCell(0);
-			var cell2 = row.insertCell(1);
-			var cell3 = row.insertCell(2);
-			var cell4 = row.insertCell(3);
-			var cell5 = row.insertCell(4);
-			var cell6 = row.insertCell(5);
-			var cell7 = row.insertCell(6);
-
-			cell1.innerHTML = "<span>"+dayName+"</span>";
-			cell2.innerHTML = "<input type='date' value='"+dateString+"' disabled/>";
-			cell3.innerHTML = "<input type='time' value=''/>";
-			cell4.innerHTML = "<input type='time' value=''/>";
-			cell5.innerHTML = "<input type='time' value=''/>";
-			cell6.innerHTML = "<input type='time' value=''/>";
-			cell7.innerHTML = "<input type='checkbox'/>";
+			document.getElementById("daysTab").hidden = false;
+			document.getElementById("extButt").hidden = false;
+			isTabInit = true
+		} else {
+			modifTab(firstDate, table)
 		}
-		document.getElementById("daysTab").hidden = false;
-		document.getElementById("extButt").hidden = false;
-		isTabInit = true
-	} else {
-		modifTab(firstDate, table)
+		//document.getElementById('datejour1').disabled = true;
+		//document.getElementById('datejour1btn').disabled = true;
 	}
 }
 
@@ -129,13 +146,13 @@ function initTab2(data) {
 		for (var key in obj){
 			j++
 			var value = obj[key];
-			if(i==0 && j>6 && !isTab2Init) { //pas j>6 mais key!=Jour,Date, prise de service, ... TO DO
+			if(i==0 && j>7 && !isTab2Init) { //pas j>7 mais key!=Jour,Date, prise de service, ... TO DO
 				header.appendChild(document.createElement("th")).textContent = key //add cell in header
 			}
 			var row = -1
 			for (const child of myElement.children) {
 				row++
-				if(row==i && j>6) { //pas j>6 mais key!=Jour,Date, prise de service, ... TO DO 
+				if(row==i && j>7) { //pas j>7 mais key!=Jour,Date, prise de service, ... TO DO 
 					if(!isTab2Init) {
 						child.appendChild(document.createElement("td")).innerHTML = "<span>"+Math.round(value*100)/100+"</span>" //add cell in tab rows
 					} else {
@@ -154,7 +171,7 @@ function initTab2(data) {
 	isTab2Init = true
 }
 
-function initTabSemaine(semaine1,semaine2,semaine3,semaine4) {
+function initTabSemaine(semaine1,semaine2,semaine3,semaine4,semaine5,semaine6) {
 
 	var table = document.getElementById("semaines");
 	table.innerHTML = ''
@@ -199,11 +216,31 @@ function initTabSemaine(semaine1,semaine2,semaine3,semaine4) {
 		var value = obj[key];
 		row.insertCell(j).innerHTML = "<span>"+Math.round(value*100)/100+"</span>";
 	}
+	if(nb15ene=3)
+	{
+		row = tBody.insertRow(-1);
+		obj = semaine5;
+		j=-1
+		for (var key in obj){
+			j++
+			var value = obj[key];
+			row.insertCell(j).innerHTML = "<span>"+Math.round(value*100)/100+"</span>";
+		}
+
+		row = tBody.insertRow(-1);
+		obj = semaine6;
+		j=-1
+		for (var key in obj){
+			j++
+			var value = obj[key];
+			row.insertCell(j).innerHTML = "<span>"+Math.round(value*100)/100+"</span>";
+		}
+	}
 
 	table.hidden = false;
 }
 
-function initTab15ene(premiere15ene,deusieme15ene) {
+function initTab15ene(premiere15ene,deusieme15ene,troisieme15ene) {
 
 	var table = document.getElementById("ene15");
 	table.innerHTML = ''
@@ -228,6 +265,18 @@ function initTab15ene(premiere15ene,deusieme15ene) {
 		j++
 		var value = obj[key];
 		row.insertCell(j).innerHTML = "<span>"+Math.round(value*100)/100+"</span>";
+	}
+
+	if(nb15ene=3)
+	{
+		row = tBody.insertRow(-1);
+		obj = troisieme15ene;
+		j=-1
+		for (var key in obj){
+			j++
+			var value = obj[key];
+			row.insertCell(j).innerHTML = "<span>"+Math.round(value*100)/100+"</span>";
+		}
 	}
 
 	table.hidden = false;
@@ -297,6 +346,7 @@ async function exportTab() {
 	var data = parseTable(table); // faire le parse moi meme TO DO
 	data = await calcTab(data)
 
+	console.log(data)
 
 
 	var semaine1 = new Array()
@@ -306,11 +356,16 @@ async function exportTab() {
 	semaine2 = calcSemaine(8,14,semaine2,data)
 
 	var semaine3 = new Array()
-	semaine3 = calcSemaine(15,22,semaine3,data)
+	semaine3 = calcSemaine(15,21,semaine3,data)
 
 	var semaine4 = new Array()
-	semaine4 = calcSemaine(23,28,semaine4,data)
+	semaine4 = calcSemaine(22,28,semaine4,data)
 
+	var semaine5 = new Array()
+	if(nb15ene==3) semaine5 = calcSemaine(29,35,semaine5,data)
+
+	var semaine6 = new Array()
+	if(nb15ene==3) semaine6 = calcSemaine(36,42,semaine6,data)
 
 
 	var premiere15ene = new Array()
@@ -319,13 +374,18 @@ async function exportTab() {
 	var deusieme15ene = new Array()
 	deusieme15ene = calc15ene(semaine3,semaine4,deusieme15ene)
 
+	var troisieme15ene = new Array()
+	if(nb15ene==3) troisieme15ene = calc15ene(semaine5,semaine6,troisieme15ene)
 
-	mois = calcMois(premiere15ene,deusieme15ene,mois)
-
+	if(nb15ene==3) {
+		mois = calcMoisTrois15ene(premiere15ene,deusieme15ene,troisieme15ene,mois)
+	} else {
+		mois = calcMois(premiere15ene,deusieme15ene,mois)
+	}
 
 	initTab2(data)
-	initTabSemaine(semaine1,semaine2,semaine3,semaine4)
-	initTab15ene(premiere15ene,deusieme15ene)
+	initTabSemaine(semaine1,semaine2,semaine3,semaine4,semaine5,semaine6)
+	initTab15ene(premiere15ene,deusieme15ene,troisieme15ene)
 	initTabMois(mois)
 	if (isDiffCalc) {
 		calcDiff()
@@ -424,7 +484,14 @@ async function calcTab(data) {
 	await getJourFerie(data).then((result) => {
 	  	data = result;},
 	);
+
+	console.log(data)
 	for (var i = 0; i <= data.length-2; i++) {
+
+		data[i]['Pause pas repas en decimal'] = 0
+		if (data[i]['Pause pas repas']!==""){
+			data[i]['Pause pas repas en decimal'] = parseInt(data[i]['Pause pas repas'].slice(0, 2))+parseInt(data[i]['Pause pas repas'].slice(3, 6))/60
+		}
 
 		data[i]['Prise de service en decimal'] = 0
 		if (data[i]['Prise de service']!==""){
@@ -432,13 +499,13 @@ async function calcTab(data) {
 		}
 
 		data[i]['Début de pause en decimal'] = 0
-		if (data[i]['Début de pause']!==""){
-			data[i]['Début de pause en decimal'] = parseInt(data[i]['Début de pause'].slice(0, 2))+parseInt(data[i]['Début de pause'].slice(3, 6))/60
+		if (data[i]['Début de pause repas']!==""){
+			data[i]['Début de pause en decimal'] = parseInt(data[i]['Début de pause repas'].slice(0, 2))+parseInt(data[i]['Début de pause repas'].slice(3, 6))/60
 		}
 		
 		data[i]['Fin de pause en decimal'] = 0
-		if (data[i]['Fin de pause']!==""){
-			data[i]['Fin de pause en decimal'] = parseInt(data[i]['Fin de pause'].slice(0, 2))+parseInt(data[i]['Fin de pause'].slice(3, 6))/60
+		if (data[i]['Fin de pause repas']!==""){
+			data[i]['Fin de pause en decimal'] = parseInt(data[i]['Fin de pause repas'].slice(0, 2))+parseInt(data[i]['Fin de pause repas'].slice(3, 6))/60
 		}
 		
 		data[i]['Fin de service en decimal'] = 0
@@ -525,10 +592,15 @@ async function calcTab(data) {
 		{
 			data[i]['Temps de travail effectif en decimal'] =  24 - data[i]['Prise de service en decimal'] - data[i]['Temps de pause en decimal']
 		}
-		if(data[i]['Nuit / Week end / Ferie'] == true)
+		if(data[i]['Nuit / Week end / Ferie'] == true && Date.parse(data[i]['Date'])<Date.parse("2025-01-01"))
 		{
 			data[i]['Temps de travail effectif en decimal'] = (data[i]['Temps de travail effectif en decimal']*coeffDeLArnaque)
 		}
+		else if(data[i]['Nuit / Week end / Ferie'] == true && Date.parse(data[i]['Date'])>=Date.parse("2025-01-01"))
+		{
+			data[i]['Temps de travail effectif en decimal'] = (data[i]['Temps de travail effectif en decimal']*coeffDeLArnaquePoste01012025)
+		}
+		data[i]['Temps de travail effectif en decimal'] = data[i]['Temps de travail effectif en decimal'] - data[i]['Pause pas repas en decimal']
 	}
 
 	return data
@@ -589,16 +661,31 @@ function calc15ene(semaine1,semaine2,ene15){
 }
 
 function calcMois(premiere15ene,deusieme15ene,mois){
-	mois["base mensuel"] = heureMensuelle
-	mois["majorees 25"] = premiere15ene["majorees 25"] + deusieme15ene["majorees 25"]
-	mois["majorees 50"] = premiere15ene["majorees 50"] + deusieme15ene["majorees 50"]
+	mois["Salaire de base mensuel"] = heureMensuelle
+	mois["HS Majorées 25%"] = premiere15ene["majorees 25"] + deusieme15ene["majorees 25"]
+	mois["HS Majorées 50%"] = premiere15ene["majorees 50"] + deusieme15ene["majorees 50"]
 	mois["Majoration dimanche"] = premiere15ene["Majoration dimanche"] + deusieme15ene["Majoration dimanche"]
-	mois["idaj"] = premiere15ene["idaj"] + deusieme15ene["idaj"]
-	mois["Prime"] = prime
-	mois["repasExt"] = premiere15ene["repasExt"] + deusieme15ene["repasExt"]
-	mois["repasSoir"] = premiere15ene["repasSoir"] + deusieme15ene["repasSoir"]
-	mois["repas30"] = premiere15ene["repas30"] + deusieme15ene["repas30"]
-	mois["Jous de congés acquis"] = joursDeCongesAcquis
+	mois["IDAJ 100%"] = premiere15ene["idaj"] + deusieme15ene["idaj"]
+	mois["Prime (CP)"] = prime
+	mois["Ind. repas (exterieur)"] = premiere15ene["repasExt"] + deusieme15ene["repasExt"]
+	mois["Ind. repas unique (soir)"] = premiere15ene["repasSoir"] + deusieme15ene["repasSoir"]
+	mois["Ind. spéciale (30 min)"] = premiere15ene["repas30"] + deusieme15ene["repas30"]
+	mois["Jours de congés acquis"] = joursDeCongesAcquis
+
+	return mois
+}
+
+function calcMoisTrois15ene(premiere15ene,deusieme15ene,troisieme15ene,mois){
+	mois["Salaire de base mensuel"] = heureMensuelle
+	mois["HS Majorées 25%"] = premiere15ene["majorees 25"] + deusieme15ene["majorees 25"] + troisieme15ene["majorees 25"]
+	mois["HS Majorées 50%"] = premiere15ene["majorees 50"] + deusieme15ene["majorees 50"] + troisieme15ene["majorees 50"]
+	mois["Majoration dimanche"] = premiere15ene["Majoration dimanche"] + deusieme15ene["Majoration dimanche"] + troisieme15ene["Majoration dimanche"]
+	mois["IDAJ 100%"] = premiere15ene["idaj"] + deusieme15ene["idaj"] + troisieme15ene["idaj"]
+	mois["Prime (CP)"] = prime
+	mois["Ind. repas (exterieur)"] = premiere15ene["repasExt"] + deusieme15ene["repasExt"] + troisieme15ene["repasExt"]
+	mois["Ind. repas unique (soir)"] = premiere15ene["repasSoir"] + deusieme15ene["repasSoir"] + troisieme15ene["repasSoir"]
+	mois["Ind. spéciale (30 min)"] = premiere15ene["repas30"] + deusieme15ene["repas30"] + troisieme15ene["repas30"]
+	mois["Jours de congés acquis"] = joursDeCongesAcquis
 
 	return mois
 }
